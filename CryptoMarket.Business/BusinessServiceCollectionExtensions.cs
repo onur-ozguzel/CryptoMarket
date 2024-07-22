@@ -5,8 +5,8 @@ using CryptoMarket.Business.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polly.Timeout;
 using Polly;
+using Polly.Timeout;
 using System.Net;
 
 namespace CryptoMarket.Business
@@ -18,6 +18,7 @@ namespace CryptoMarket.Business
             services.AddHttpClient<ICoinMarketCapService, CoinMarketCapService>()
                 .AddStandardResilienceHandler(options =>
                 {
+                    // sample usage of customizing ResilienceHandler
                     // Customize retry
                     options.Retry.ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
                         .Handle<TimeoutRejectedException>()
