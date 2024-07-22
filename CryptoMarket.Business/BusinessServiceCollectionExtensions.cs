@@ -5,6 +5,9 @@ using CryptoMarket.Business.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly.Timeout;
+using Polly;
+using System.Net;
 
 namespace CryptoMarket.Business
 {
@@ -12,9 +15,31 @@ namespace CryptoMarket.Business
     {
         public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfigurationRoot configuration)
         {
-            services.AddScoped<ICoinMarketCapService, CoinMarketCapService>();
-            services.AddHttpClient<CoinMarketCapService>()
-                .AddStandardResilienceHandler();
+            services.AddHttpClient<ICoinMarketCapService, CoinMarketCapService>()
+                .AddStandardResilienceHandler(options =>
+                {
+                    // Customize retry
+                    options.Retry.ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+                        .Handle<TimeoutRejectedException>()
+                        .Handle<HttpRequestException>()
+                        .HandleResult(response => response.StatusCode == HttpStatusCode.InternalServerError)
+                        .HandleResult(response => response.StatusCode == HttpStatusCode.NotFound);
+                    options.Retry.MaxRetryAttempts = 5;
+
+                    // Customize attempt timeout
+                    options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(2);
+
+                    // Customize circuit breaker
+                    options.CircuitBreaker.ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+                        .Handle<TimeoutRejectedException>()
+                        .Handle<HttpRequestException>()
+                        .HandleResult(response => response.StatusCode == HttpStatusCode.InternalServerError)
+                        .HandleResult(response => response.StatusCode == HttpStatusCode.NotFound);
+                    options.CircuitBreaker.FailureRatio = 0.2; // Break on 20% failures
+                    options.CircuitBreaker.MinimumThroughput = 3; // Minimum 3 requests before acting
+                    options.CircuitBreaker.BreakDuration = TimeSpan.FromSeconds(10); // Break for 10 seconds
+                });
+
             RegisterCoinMarketCapConfig(services, configuration);
 
             return services;
