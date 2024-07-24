@@ -1,4 +1,4 @@
-﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors.Types;
+﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors;
 using CryptoMarket.Business.Models;
 using CryptoMarket.Business.Models.Responses.GetCryptoCurrencyQuotes;
 using FluentResults;

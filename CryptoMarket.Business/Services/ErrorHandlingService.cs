@@ -1,20 +1,20 @@
-﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors.Types;
+﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CryptoMarket.Business.CrossCuttingConcerns.Errors.Helpers
+namespace CryptoMarket.Business.Services
 {
-    public static class ResultHelper
+    public class ErrorHandlingService : IErrorHandlingService
     {
-        private static readonly Dictionary<Type, int> ErrorStatusCodes = new()
+        private readonly Dictionary<Type, int> ErrorStatusCodes = new()
         {
             { typeof(FailedToFetchDataError), StatusCodes.Status500InternalServerError },
             { typeof(NoDataReturnedFromTheAPIError), StatusCodes.Status500InternalServerError },
             { typeof(ArgumentNullOrEmptyError), StatusCodes.Status400BadRequest }
         };
 
-        public static IActionResult HandleResult<T>(Result<T> result)
+        public IActionResult HandleResult<T>(IResult<T> result)
         {
             if (result.IsSuccess)
             {

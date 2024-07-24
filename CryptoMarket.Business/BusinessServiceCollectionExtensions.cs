@@ -15,6 +15,7 @@ namespace CryptoMarket.Business
     {
         public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfigurationRoot configuration)
         {
+            services.AddSingleton<IErrorHandlingService, ErrorHandlingService>();
             services.AddHttpClient<ICoinMarketCapService, CoinMarketCapService>()
                 .AddStandardResilienceHandler(options =>
                 {

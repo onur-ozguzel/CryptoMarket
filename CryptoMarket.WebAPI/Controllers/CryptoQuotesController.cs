@@ -1,5 +1,4 @@
-﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors.Helpers;
-using CryptoMarket.Business.Services;
+﻿using CryptoMarket.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoMarket.WebAPI.Controllers
@@ -9,10 +8,12 @@ namespace CryptoMarket.WebAPI.Controllers
     public class CryptoQuotesController : ControllerBase
     {
         private readonly ICoinMarketCapService _coinMarketCapService;
+        private readonly IErrorHandlingService _errorHandlingService;
 
-        public CryptoQuotesController(ICoinMarketCapService coinMarketCapService)
+        public CryptoQuotesController(IErrorHandlingService errorHandlingService, ICoinMarketCapService coinMarketCapService)
         {
             _coinMarketCapService = coinMarketCapService;
+            _errorHandlingService = errorHandlingService;
         }
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace CryptoMarket.WebAPI.Controllers
         {
             var result = await _coinMarketCapService.GetCryptoCurrencyQuotesAsync(cancellationToken, symbol);
 
-            return ResultHelper.HandleResult(result);
+            return _errorHandlingService.HandleResult(result);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace CryptoMarket.Business.CrossCuttingConcerns.Errors.Types
+namespace CryptoMarket.Business.CrossCuttingConcerns.Errors
 {
     public class ArgumentNullOrEmptyError : Error
     {
