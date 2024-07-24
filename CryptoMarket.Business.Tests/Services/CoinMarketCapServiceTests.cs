@@ -193,10 +193,10 @@ namespace CryptoMarket.Business.Tests.Services
             var result = await _service.GetCryptoCurrencyQuotesAsync(cancellationToken, symbol);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().HaveCount(1);
+            result.Value.Should().NotBeNull();
+            result.Value.Should().HaveCount(1);
 
-            var quote = result.First();
+            var quote = result.Value.First();
             quote.Name.Should().Be("Bitcoin");
             quote.Symbol.Should().Be("BTC");
             quote.Slug.Should().Be("bitcoin");

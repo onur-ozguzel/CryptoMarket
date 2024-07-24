@@ -51,7 +51,7 @@ namespace CryptoMarket.Business
             var coinMarketCapConfig = configuration.GetSection(CoinMarketCapConstants.CoinMarketCapConfigName).Get<CoinMarketCapConfig>();
             if (coinMarketCapConfig == null)
             {
-                throw new InvalidOperationException(ErrorMessages.CoinMarketCapConfigurationIsMissingOrInvalid);
+                throw new InvalidOperationException(ExceptionMessages.CoinMarketCapConfigurationIsMissingOrInvalid);
             }
 
             services

@@ -1,4 +1,5 @@
-﻿using CryptoMarket.Business.Services;
+﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors.Helpers;
+using CryptoMarket.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoMarket.WebAPI.Controllers
@@ -25,7 +26,7 @@ namespace CryptoMarket.WebAPI.Controllers
         {
             var result = await _coinMarketCapService.GetCryptoCurrencyQuotesAsync(cancellationToken, symbol);
 
-            return Ok(result);
+            return ResultHelper.HandleResult(result);
         }
     }
 }

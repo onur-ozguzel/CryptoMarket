@@ -1,6 +1,5 @@
 using CryptoMarket.Business;
 using CryptoMarket.Core;
-using CryptoMarket.Core.CrossCuttingConcerns.Exceptions.Extensions;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 
@@ -37,7 +36,7 @@ app.UseSwaggerUI();
 
 //if (app.Environment.IsProduction())
 //{
-app.ConfigureCustomExceptionMiddleware();
+app.UseExceptionMiddleware();
 //}
 
 app.UseHttpsRedirection();

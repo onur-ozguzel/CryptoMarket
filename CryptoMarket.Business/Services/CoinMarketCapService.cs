@@ -1,7 +1,7 @@
-﻿using CryptoMarket.Business.Constants;
+﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors.Types;
 using CryptoMarket.Business.Models;
 using CryptoMarket.Business.Models.Responses.GetCryptoCurrencyQuotes;
-using CryptoMarket.Core.CrossCuttingConcerns.Exceptions.Types;
+using FluentResults;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
@@ -22,11 +22,11 @@ namespace CryptoMarket.Business.Services
             ConfigureHttpClient();
         }
 
-        public async Task<List<CryptoCurrencyQuotesDto>> GetCryptoCurrencyQuotesAsync(CancellationToken cancellationToken, string symbol)
+        public async Task<Result<List<CryptoCurrencyQuotesDto>>> GetCryptoCurrencyQuotesAsync(CancellationToken cancellationToken, string symbol)
         {
             if (string.IsNullOrWhiteSpace(symbol))
             {
-                throw new Exception(string.Format(ErrorMessages.ParameterCannotBeNullOrEmpty, nameof(symbol)));
+                return Result.Fail(new ArgumentNullOrEmptyError(nameof(symbol)));
             }
 
             var url = GetCryptoCurrencyQuotesBuildUrl(symbol);
@@ -34,7 +34,7 @@ namespace CryptoMarket.Business.Services
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                throw new Exception(ErrorMessages.FailedToFetchData);
+                return Result.Fail(new FailedToFetchDataError((int)httpResponseMessage.StatusCode));
             }
 
             var serializeOptions = new JsonSerializerOptions
@@ -46,12 +46,12 @@ namespace CryptoMarket.Business.Services
 
             if (apiResult == null || apiResult.Data == null || !apiResult.Data.Any() || !apiResult.Data.Single().Value.Any())
             {
-                throw new BusinessException(string.Format(ErrorMessages.NoDataReturnedFromTheAPI));
+                return Result.Fail(new NoDataReturnedFromTheAPIError());
             }
 
             var results = MapGetCryptoCurrencyQuotesResponse(apiResult.Data.Values.Single());
 
-            return results;
+            return Result.Ok(results);
         }
 
         private List<CryptoCurrencyQuotesDto> MapGetCryptoCurrencyQuotesResponse(List<CryptocurrencyData> cryptocurrencyData)

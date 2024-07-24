@@ -45,7 +45,7 @@ namespace CryptoMarket.Business.Tests
             Action act = () => services.AddBusinessServices(configuration);
 
             // Assert
-            act.Should().ThrowExactly<InvalidOperationException>().WithMessage(ErrorMessages.CoinMarketCapConfigurationIsMissingOrInvalid);
+            act.Should().ThrowExactly<InvalidOperationException>().WithMessage(ExceptionMessages.CoinMarketCapConfigurationIsMissingOrInvalid);
         }
     }
 }
