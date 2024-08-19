@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Onur.IDP", "Onur.IDP\Onur.IDP.csproj", "{33DD1A20-34D1-4C64-B796-E3AD6807FE88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{0B4225E8-B26B-4284-8008-808D349E1A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B4225E8-B26B-4284-8008-808D349E1A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B4225E8-B26B-4284-8008-808D349E1A48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33DD1A20-34D1-4C64-B796-E3AD6807FE88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33DD1A20-34D1-4C64-B796-E3AD6807FE88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33DD1A20-34D1-4C64-B796-E3AD6807FE88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33DD1A20-34D1-4C64-B796-E3AD6807FE88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
