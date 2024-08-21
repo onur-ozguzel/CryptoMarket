@@ -6,6 +6,18 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSwaggerUI",
+                builder =>
+                {
+                    builder.WithOrigins("https://localhost:7068")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials();
+                });
+        });
+
         builder.Services.AddRazorPages();
 
         builder.Services.AddIdentityServer(options =>
@@ -15,6 +27,7 @@ internal static class HostingExtensions
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryApiResources(Config.ApiResources)
             .AddInMemoryClients(Config.Clients)
             .AddTestUsers(TestUsers.Users);
 
@@ -32,6 +45,8 @@ internal static class HostingExtensions
 
         app.UseStaticFiles();
         app.UseRouting();
+
+        app.UseCors("AllowSwaggerUI");
 
         app.UseIdentityServer();
 

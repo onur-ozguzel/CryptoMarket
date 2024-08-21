@@ -11,7 +11,8 @@ namespace CryptoMarket.Business.Services
         {
             { typeof(FailedToFetchDataError), StatusCodes.Status500InternalServerError },
             { typeof(NoDataReturnedFromTheAPIError), StatusCodes.Status500InternalServerError },
-            { typeof(ArgumentNullOrEmptyError), StatusCodes.Status400BadRequest }
+            { typeof(ArgumentNullOrEmptyError), StatusCodes.Status400BadRequest },
+            { typeof(UnauthorizedError), StatusCodes.Status401Unauthorized }
         };
 
         public IActionResult HandleResult<T>(IResult<T> result)
@@ -21,14 +22,27 @@ namespace CryptoMarket.Business.Services
                 return new OkObjectResult(result.Value);
             }
 
-            var errors = result.Errors;
+            return HandleErrors(result.Errors);
+        }
+
+        public IActionResult HandleError(IResultBase result)
+        {
+            return HandleErrors(result.Errors);
+        }
+
+        private IActionResult HandleErrors(List<IError> errors)
+        {
             if (errors.Any(error => ErrorStatusCodes.TryGetValue(error.GetType(), out var statusCode) && statusCode == StatusCodes.Status500InternalServerError))
             {
                 return new ObjectResult(errors) { StatusCode = StatusCodes.Status500InternalServerError };
             }
+            else if (errors.Any(error => ErrorStatusCodes.TryGetValue(error.GetType(), out var statusCode) && statusCode == StatusCodes.Status401Unauthorized))
+            {
+                return new ObjectResult(errors) { StatusCode = StatusCodes.Status401Unauthorized };
+            }
 
 
-            return new ObjectResult(result.Errors) { StatusCode = StatusCodes.Status400BadRequest };
+            return new ObjectResult(errors) { StatusCode = StatusCodes.Status400BadRequest };
         }
     }
 }

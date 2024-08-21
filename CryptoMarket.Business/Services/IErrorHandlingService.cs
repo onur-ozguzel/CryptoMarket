@@ -6,5 +6,6 @@ namespace CryptoMarket.Business.Services
     public interface IErrorHandlingService
     {
         IActionResult HandleResult<T>(IResult<T> result);
+        IActionResult HandleError(IResultBase errors);
     }
 }

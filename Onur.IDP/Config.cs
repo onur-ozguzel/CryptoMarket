@@ -15,9 +15,22 @@ public static class Config
                 ,["role"])
         };
 
+    public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+            {
+                new ApiResource("cryptomarketapi"
+                    , "Crypto Market API"
+                    , ["role"])
+                {
+                    Scopes = { "cryptomarketapi.fullaccess" }
+                }
+            };
+
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
-            { };
+            {
+                new ApiScope("cryptomarketapi.fullaccess")
+            };
 
     public static IEnumerable<Client> Clients =>
         new Client[]
@@ -29,7 +42,7 @@ public static class Config
                     AllowedGrantTypes = GrantTypes.Code,
                     RedirectUris =
                     {
-                        "https://localhost:7068/signin-oidc"
+                        "https://localhost:7068/signin-oidc",
                     },
                     PostLogoutRedirectUris =
                     {
@@ -40,6 +53,27 @@ public static class Config
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "roles"
+                    },
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    RequireConsent = true
+                },
+                new Client()
+                {
+                    ClientName = "CryptoMarketApi",
+                    ClientId   = "cryptomarketapi",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RedirectUris =
+                    {
+                        "https://localhost:7068/swagger/oauth2-redirect.html"
+                    },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "cryptomarketapi.fullaccess"
                     },
                     ClientSecrets =
                     {

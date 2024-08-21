@@ -1,10 +1,14 @@
-﻿using CryptoMarket.Business.Services;
+﻿using CryptoMarket.Business.CrossCuttingConcerns.Errors;
+using CryptoMarket.Business.Services;
+using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoMarket.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class CryptoQuotesController : ControllerBase
     {
         private readonly ICoinMarketCapService _coinMarketCapService;
@@ -23,8 +27,30 @@ namespace CryptoMarket.WebAPI.Controllers
         /// <param name="symbol">Cryptocurrency symbol.</param>
         /// <returns>ActionResult with the cryptocurrency quotes.</returns>
         [HttpGet]
-        public async Task<IActionResult> GetCryptoCurrencyQuotesAsync(CancellationToken cancellationToken, string symbol)
+        [Authorize(Roles = "PayingUser")]
+        public async Task<IActionResult> GetCryptoCurrencyQuotesUltimateAsync(CancellationToken cancellationToken, string symbol)
         {
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            if (ownerId == null)
+            {
+                return _errorHandlingService.HandleError(Result.Fail(new UnauthorizedError()));
+            }
+
+            var result = await _coinMarketCapService.GetCryptoCurrencyQuotesAsync(cancellationToken, symbol);
+
+            return _errorHandlingService.HandleResult(result);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "PayingUser, FreeUser")]
+        public async Task<IActionResult> GetCryptoCurrencyQuotesNormalAsync(CancellationToken cancellationToken, string symbol)
+        {
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            if (ownerId == null)
+            {
+                return _errorHandlingService.HandleError(Result.Fail(new UnauthorizedError()));
+            }
+
             var result = await _coinMarketCapService.GetCryptoCurrencyQuotesAsync(cancellationToken, symbol);
 
             return _errorHandlingService.HandleResult(result);
