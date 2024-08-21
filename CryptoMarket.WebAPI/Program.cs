@@ -89,7 +89,7 @@ app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "CryptoMarket.WebAPI V1");
-    options.OAuthClientId("cryptomarketapi");
+    options.OAuthClientId("cryptomarketswaggerapi");
     options.OAuthClientSecret("secret");
     options.OAuthAppName("Swagger UI - CryptoMarket.WebAPI");
     options.OAuthUsePkce();

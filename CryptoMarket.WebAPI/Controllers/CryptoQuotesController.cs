@@ -28,7 +28,7 @@ namespace CryptoMarket.WebAPI.Controllers
         /// <returns>ActionResult with the cryptocurrency quotes.</returns>
         [HttpGet]
         [Authorize(Roles = "PayingUser")]
-        public async Task<IActionResult> GetCryptoCurrencyQuotesUltimateAsync(CancellationToken cancellationToken, string symbol)
+        public async Task<IActionResult> GetCryptoCurrencyQuotesPremiumAsync(CancellationToken cancellationToken, string symbol)
         {
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
             if (ownerId == null)

@@ -52,7 +52,8 @@ public static class Config
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "roles"
+                        "roles",
+                        "cryptomarketapi.fullaccess"
                     },
                     ClientSecrets =
                     {
@@ -62,8 +63,8 @@ public static class Config
                 },
                 new Client()
                 {
-                    ClientName = "CryptoMarketApi",
-                    ClientId   = "cryptomarketapi",
+                    ClientName = "CryptoMarketSwaggerApi",
+                    ClientId   = "cryptomarketswaggerapi",
                     AllowedGrantTypes = GrantTypes.Code,
                     RedirectUris =
                     {
