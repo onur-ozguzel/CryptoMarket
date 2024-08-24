@@ -1,6 +1,8 @@
 using CryptoMarket.Business;
 using CryptoMarket.Core;
+using CryptoMarket.WebAPI.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.OpenApi.Models;
@@ -17,7 +19,7 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        Type = SecuritySchemeType.OAuth2,        
+        Type = SecuritySchemeType.OAuth2,
         Flows = new OpenApiOAuthFlows
         {
             AuthorizationCode = new OpenApiOAuthFlow
@@ -27,7 +29,9 @@ builder.Services.AddSwaggerGen(options =>
                 Scopes = new Dictionary<string, string>
                     {
                         { "openid", "OpenID Connect scope" },
-                        { "cryptomarketapi.fullaccess", "Access to API" }
+                        { "cryptomarketapi.read", "Read Access to API" },
+                        { "cryptomarketapi.write", "Write Access to API" },
+                        { "country", "The country you' re living in" }
                     }
             },
         }
@@ -44,14 +48,15 @@ builder.Services.AddSwaggerGen(options =>
                         Id = "oauth2"
                     }
                 },
-                new[] { "openid", "cryptomarketapi.fullaccess" }
+                new[] { "openid", "cryptomarketapi.read", "cryptomarketapi.write" }
             }
         });
 });
-builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddCoreServices();
+builder.Services.AddScoped<IAuthorizationHandler, MustOwnAlertHandler>();
 
 // sample usage of rate limiting
 builder.Services.AddRateLimiter(_ => _
@@ -78,6 +83,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("PremiumUser", AuthorizationPolicies.CanAccessPremiumEndpoints());
+    options.AddPolicy("ClientApplicationCanWrite", policyBuilder =>
+    { 
+        policyBuilder.RequireClaim("scope", "cryptomarketapi.write");
+    });
+    options.AddPolicy("MustOwnAlert", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.AddRequirements(new MustOwnAlertRequirement());
+    });
+});
+
 var app = builder.Build();
 
 app.ValidateCoinMarketCapConfig();
@@ -94,7 +113,7 @@ app.UseSwaggerUI(options =>
     options.OAuthAppName("Swagger UI - CryptoMarket.WebAPI");
     options.OAuthUsePkce();
     options.OAuth2RedirectUrl("https://localhost:7068/swagger/oauth2-redirect.html");
-    options.OAuthScopes("openid", "cryptomarketapi.fullaccess");
+    options.OAuthScopes("openid", "cryptomarketapi.read", "cryptomarketapi.write", "country");
 });
 //}
 

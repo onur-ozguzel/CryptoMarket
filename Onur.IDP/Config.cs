@@ -10,9 +10,12 @@ public static class Config
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
-            new IdentityResource("roles"
-                ,"Your role(s)"
-                ,["role"])
+            new IdentityResource("roles",
+                "Your role(s)",
+                ["role"]),
+            new IdentityResource("country",
+                "The country you' re living in",
+                ["country"])
         };
 
     public static IEnumerable<ApiResource> ApiResources =>
@@ -20,16 +23,21 @@ public static class Config
             {
                 new ApiResource("cryptomarketapi"
                     , "Crypto Market API"
-                    , ["role"])
+                    , ["role", "country"])
                 {
-                    Scopes = { "cryptomarketapi.fullaccess" }
+                    Scopes = { "cryptomarketapi.fullaccess",
+                        "cryptomarketapi.read",
+                        "cryptomarketapi.write" },
+                    //ApiSecrets = { new Secret("apisecret".Sha256()) }
                 }
             };
 
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
             {
-                new ApiScope("cryptomarketapi.fullaccess")
+                new ApiScope("cryptomarketapi.fullaccess"),
+                new ApiScope("cryptomarketapi.read"),
+                new ApiScope("cryptomarketapi.write")
             };
 
     public static IEnumerable<Client> Clients =>
@@ -40,6 +48,15 @@ public static class Config
                     ClientName = "CryptoMarket",
                     ClientId   = "cryptomarketclient",
                     AllowedGrantTypes = GrantTypes.Code,
+                    //AccessTokenType = AccessTokenType.Reference,
+                    //IdentityTokenLifetime = 300,
+                    //AuthorizationCodeLifetime = 300,
+                    AccessTokenLifetime = TimeSpan.FromMinutes(2).Seconds,
+                    AllowOfflineAccess = true,
+                    //AbsoluteRefreshTokenLifetime = 0,
+                    //SlidingRefreshTokenLifetime = 60,                    
+                    UpdateAccessTokenClaimsOnRefresh = true,
+
                     RedirectUris =
                     {
                         "https://localhost:7068/signin-oidc",
@@ -53,7 +70,10 @@ public static class Config
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "roles",
-                        "cryptomarketapi.fullaccess"
+                        //"cryptomarketapi.fullaccess",
+                        "cryptomarketapi.read",
+                        "cryptomarketapi.write",
+                        "country"
                     },
                     ClientSecrets =
                     {
@@ -74,7 +94,10 @@ public static class Config
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "cryptomarketapi.fullaccess"
+                        //"cryptomarketapi.fullaccess",
+                        "cryptomarketapi.read",
+                        "cryptomarketapi.write",
+                        "country"
                     },
                     ClientSecrets =
                     {

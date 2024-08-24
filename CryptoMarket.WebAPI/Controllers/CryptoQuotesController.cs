@@ -27,7 +27,7 @@ namespace CryptoMarket.WebAPI.Controllers
         /// <param name="symbol">Cryptocurrency symbol.</param>
         /// <returns>ActionResult with the cryptocurrency quotes.</returns>
         [HttpGet]
-        [Authorize(Roles = "PayingUser")]
+        [Authorize(Policy = "PremiumUser")]
         public async Task<IActionResult> GetCryptoCurrencyQuotesPremiumAsync(CancellationToken cancellationToken, string symbol)
         {
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
@@ -42,7 +42,7 @@ namespace CryptoMarket.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PayingUser, FreeUser")]
+        //[Authorize(Roles = "PayingUser, FreeUser")]
         public async Task<IActionResult> GetCryptoCurrencyQuotesNormalAsync(CancellationToken cancellationToken, string symbol)
         {
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
