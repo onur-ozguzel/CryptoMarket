@@ -22,6 +22,10 @@ try
     
     app.Run();
 }
+catch (HostAbortedException ex) when (ex.Source == "Microsoft.EntityFrameworkCore.Design") 
+{
+    // eat exception, see https://github.com/dotnet/efcore/issues/29923
+}
 catch (Exception ex)
 {
     Log.Fatal(ex, "Unhandled exception");

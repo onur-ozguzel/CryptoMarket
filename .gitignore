@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Onur.IDP/OnurIdentity.db
+/Onur.IDP/OnurIdentity.db-shm
+/Onur.IDP/OnurIdentity.db-wal

@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Onur.IDP.DbContexts;
+using Onur.IDP.Services;
 using Serilog;
 
 namespace Onur.IDP;
@@ -20,24 +23,31 @@ internal static class HostingExtensions
 
         builder.Services.AddRazorPages();
 
+        builder.Services.AddScoped<ILocalUserService, LocalUserService>();
+
+        builder.Services.AddDbContext<IdentityDbContext>(options =>
+        {
+            options.UseSqlite(builder.Configuration.GetConnectionString("OnurIdentityDBConnectionString"));
+        });
+
         builder.Services.AddIdentityServer(options =>
             {
                 // https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/api_scopes#authorization-based-on-scopes
                 options.EmitStaticAudienceClaim = true;
             })
+            .AddProfileService<LocalUserProfileService>()
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryApiResources(Config.ApiResources)
-            .AddInMemoryClients(Config.Clients)
-            .AddTestUsers(TestUsers.Users);
+            .AddInMemoryClients(Config.Clients);
 
         return builder.Build();
     }
-    
+
     public static WebApplication ConfigurePipeline(this WebApplication app)
-    { 
+    {
         app.UseSerilogRequestLogging();
-    
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

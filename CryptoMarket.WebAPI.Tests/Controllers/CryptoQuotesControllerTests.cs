@@ -11,7 +11,7 @@ namespace CryptoMarket.WebAPI.Tests.Controllers
     public class CryptoQuotesControllerTests
     {
         [Fact]
-        public async Task GetCryptoCurrencyQuotesAsync_WithValidSymbol_ReturnsOkObjectResult()
+        public async Task GetCryptoCurrencyQuotesNormalAsync_WithValidSymbol_ReturnsOkObjectResult()
         {
             // Arrange
             string symbol = "BTC";
@@ -26,7 +26,7 @@ namespace CryptoMarket.WebAPI.Tests.Controllers
             var controller = new CryptoQuotesController(mockErrorService.Object, mockService.Object);
 
             // Act
-            var result = await controller.GetCryptoCurrencyQuotesAsync(new CancellationToken(), symbol);
+            var result = await controller.GetCryptoCurrencyQuotesNormalAsync(new CancellationToken(), symbol);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>()
