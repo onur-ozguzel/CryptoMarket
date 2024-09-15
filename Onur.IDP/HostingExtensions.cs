@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Onur.IDP.DbContexts;
 using Onur.IDP.Services;
@@ -22,6 +23,8 @@ internal static class HostingExtensions
         });
 
         builder.Services.AddRazorPages();
+
+        builder.Services.AddScoped<IPasswordHasher<Entities.User>, PasswordHasher<Entities.User>>();
 
         builder.Services.AddScoped<ILocalUserService, LocalUserService>();
 
